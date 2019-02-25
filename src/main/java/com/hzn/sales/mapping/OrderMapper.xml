@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzn.sales.dao.IOrderDao">
+    <!-- 使用resultMap映射实体类和字段之间的一一对应关系 -->
+    <resultMap id="SelectResultMap" type="com.hzn.sales.model.goods.Order">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result property="orderNumber" column="order_number" jdbcType="BIGINT"/>
+        <result property="uid" column="uid" jdbcType="INTEGER"/>
+        <result property="goodsNum" column="buy_num" jdbcType="INTEGER"/>
+        <result property="goodsPrice" column="goods_price" jdbcType="DOUBLE"/>
+        <result property="payPrice" column="pay_price" jdbcType="DOUBLE"/>
+        <result property="isPay" column="is_pay" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <association property="good" javaType="com.hzn.sales.model.goods.Good">
+            <id property="id" column="id"/>
+            <result property="goodsId" column="goods_id"/>
+            <result property="title" column="title"/>
+            <result property="price" column="price"/>
+            <result property="goodsImg" column="goods_img"/>
+            <result property="goodsAbstract" column="goods_abstract"/>
+            <result property="goodsText" column="goods_text"/>
+            <result property="isSold" column="is_sold"/>
+            <result property="goodsNum" column="goods_num"/>
+            <result property="soldNum" column="sold_num"/>
+            <result property="sellerUid" column="seller_uid"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+        </association>
+    </resultMap>
+    <insert id="insertOneOrder" parameterType="java.util.Map">
+        insert into db_order (order_number,uid,
+        goods_id,buy_num,goods_price,pay_price)
+        values (#{orderNumber},#{uid},
+        #{goodsId},#{goodsNum},#{goodsPrice},#{payPrice})
+    </insert>
+    <delete id="deleteOrderById" parameterType="java.lang.Integer">
+        delete from db_order
+      where id = #{id}
+    </delete>
+    <delete id="deleteOrderByOrderNumber" parameterType="java.lang.Long">
+        delete from db_order
+      where order_number = #{orderNumber}
+    </delete>
+    <select id="selectOrderById" parameterType="java.lang.Integer" resultMap="SelectResultMap">
+        select * from db_goods g,db_order o where o.goods_id=g.goods_id and o.status=1
+    </select>
+    <select id="selectOrderByOrderNumber" parameterType="java.lang.Long" resultMap="SelectResultMap">
+        select * from db_order where status=1 and o.goods_id=g.goods_id and o.status=1 and order_number=#{orderNumber}
+    </select>
+    <select id="selectOrderByUidAndGid" resultMap="SelectResultMap">
+        select * from db_goods g,db_order o where o.goods_id=g.goods_id and o.status=1
+        and o.uid=#{uid} and o.goods_id=#{goodsId}
+    </select>
+    <select id="selectOrderByUid" parameterType="java.lang.Integer" resultMap="SelectResultMap">
+        select * from db_goods g,db_order o where o.goods_id=g.goods_id and o.status=1 and o.uid=#{uid}
+    </select>
+    <select id="selectAllOrder" resultMap="SelectResultMap">
+        select * from db_goods g,db_order o where o.goods_id=g.goods_id and o.status=1
+    </select>
+</mapper>

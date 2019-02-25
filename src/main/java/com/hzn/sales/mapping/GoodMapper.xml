@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzn.sales.dao.IGoodDao">
+    <resultMap id="BaseResultMap" type="com.hzn.sales.model.goods.Good">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="price" jdbcType="DOUBLE" property="price" />
+        <result column="goods_img" jdbcType="VARCHAR" property="goodsImg" />
+        <result column="goods_abstract" jdbcType="VARCHAR" property="goodsAbstract" />
+        <result column="goods_text" jdbcType="VARCHAR" property="goodsText" />
+        <result column="is_sold" jdbcType="INTEGER" property="isSold" />
+        <result column="goods_num" jdbcType="INTEGER" property="goodsNum" />
+        <result column="sold_num" jdbcType="INTEGER" property="soldNum" />
+        <result column="seller_uid" jdbcType="INTEGER" property="sellerUid" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <insert id="insetOneGood" parameterType="com.hzn.sales.model.goods.Good" >
+    insert into db_goods (goods_id, title,price,
+    goods_img,goods_abstract,goods_text,
+    seller_uid)
+    values (#{goodsId},#{title},#{price},
+    #{goodsImg},#{goodsAbstract},#{goodsText},
+    #{sellerUid})
+  </insert>
+    <delete id="deleteGoodById" parameterType="java.lang.Integer">
+        delete from db_goods
+    where id = #{id}
+  </delete>
+    <update id="updateGoodStatus">
+        update db_goods
+        set is_sold=#{status}
+        where goods_id=#{goodsId}
+    </update>
+    <update id="updateGood" parameterType="com.hzn.sales.model.goods.Good">
+        update db_goods
+        set title = #{title,jdbcType=VARCHAR},
+    price = #{price,jdbcType=DOUBLE},
+    goods_img = #{goodsImg,jdbcType=VARCHAR},
+    goods_abstract = #{goodsAbstract,jdbcType=VARCHAR},
+    goods_text = #{goodsText,jdbcType=VARCHAR},
+    goods_num = #{goodsNum,jdbcType=INTEGER},
+    sold_num = #{soldNum,jdbcType=INTEGER},
+    seller_uid = #{sellerUid,jdbcType=INTEGER}
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+    </update>
+    <select id="selectGoodById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from db_goods where id=#{id}
+    </select>
+    <select id="selectGoodByGid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from db_goods where goods_id=#{goodsId}
+    </select>
+    <!--(@Param("uid")int uid-->
+    <select id="selectForUnBuyByUid" resultMap="BaseResultMap">
+        select * from db_goods where seller_uid!=${uid} and goods_id not in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectAllGood" resultMap="BaseResultMap">
+        select * from db_goods
+    </select>
+    <select id="selectAllGoodBySellerId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select * from db_goods where seller_uid=#{sellerId}
+    </select>
+
+    <select id="selectAllGoodBySellerIdAndStatus" resultMap="BaseResultMap">
+        select * from db_goods where seller_uid=#{sellerId} and is_sold=#{status};
+    </select>
+</mapper>

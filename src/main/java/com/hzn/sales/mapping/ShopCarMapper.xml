@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzn.sales.dao.IShopCarDao">
+    <select id="selectShopCarById" parameterType="int" resultMap="SelectResultMap">
+SELECT * FROM db_goods g,goods_shopcar s WHERE s.goods_id=g.goods_id AND s.sid=#{id} and status=0;
+    </select>
+    <select id="selectShopCarByGid" parameterType="int" resultMap="SelectResultMap">
+SELECT * FROM db_goods g,goods_shopcar s WHERE s.goods_id=g.goods_id AND s.goods_id=#{gid} and status=0;
+    </select>
+    <!-- 使用resultMap映射实体类和字段之间的一一对应关系 -->
+    <resultMap id="SelectResultMap" type="com.hzn.sales.model.goods.ShopCar">
+        <id column="sid" property="id" jdbcType="INTEGER"/>
+        <result column="uid" property="uid" jdbcType="INTEGER"/>
+        <result column="num" property="num" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <association property="good" javaType="com.hzn.sales.model.goods.Good">
+            <id property="id" column="id"/>
+            <result property="goodsId" column="goods_id"/>
+            <result property="title" column="title"/>
+            <result property="price" column="price"/>
+            <result property="goodsImg" column="goods_img"/>
+            <result property="goodsAbstract" column="goods_abstract"/>
+            <result property="goodsText" column="goods_text"/>
+            <result property="isSold" column="is_sold"/>
+            <result property="goodsNum" column="goods_num"/>
+            <result property="soldNum" column="sold_num"/>
+            <result property="sellerUid" column="seller_uid"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+        </association>
+    </resultMap>
+
+    <insert id="insertOneToShopCar" parameterType="java.util.Map">
+        insert into goods_shopcar (uid,goods_id,num) values (#{uid},#{goodsId},#{num})
+    </insert>
+    <update id="updateStatusShopCar">
+        update goods_shopcar set status=#{status} where sid=#{id}
+    </update>
+    <update id="updateStatusAndNumShopCar">
+        update goods_shopcar set status=${status},num=#{num} where sid=#{id}
+    </update>
+    <update id="updateNum">
+        update goods_shopcar set num=num+#{num} where sid=#{id} and goods_shopcar.status=0
+    </update>
+    <select id="selectShopCarByUidAndGid" resultMap="SelectResultMap">
+        SELECT * FROM db_goods g,goods_shopcar s WHERE s.goods_id=g.goods_id and s.status=0 and s.uid=#{uid} and s.goods_id=#{gid};
+    </select>
+    <select id="selectShopCarByUserId" resultMap="SelectResultMap" parameterType="java.lang.Integer">
+        SELECT * FROM db_goods g,goods_shopcar s WHERE s.goods_id=g.goods_id AND s.uid=#{uid} and s.status=0;
+    </select>
+    <select id="selectAllShopCar" resultMap="SelectResultMap">
+        SELECT * FROM db_goods g,goods_shopcar s WHERE s.goods_id=g.goods_id and s.status=0;
+    </select>
+
+</mapper>

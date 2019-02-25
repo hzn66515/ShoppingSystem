@@ -1,0 +1,68 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:component-scan base-package="com.hzn.sales.web.controller" />
+    <mvc:annotation-driven />
+    <!--静态资源访问-->
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/images/" mapping="/images/**"/>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <!--json转换器-->
+                <ref bean="mappingJacksonHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name = "supportedMediaTypes">
+            <list>
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg index="0" value="text"/>
+                    <constructor-arg index="1" value="plain"/>
+                    <constructor-arg index="2" value="UTF-8"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg index="0" value="*"/>
+                    <constructor-arg index="1" value="*"/>
+                    <constructor-arg index="2" value="UTF-8"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg index="0" value="text"/>
+                    <constructor-arg index="1" value="*"/>
+                    <constructor-arg index="2" value="UTF-8"/>
+                </bean>
+                <bean class="org.springframework.http.MediaType">
+                    <constructor-arg index="0" value="application"/>
+                    <constructor-arg index="1" value="json"/>
+                    <constructor-arg index="2" value="UTF-8"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+</beans>
